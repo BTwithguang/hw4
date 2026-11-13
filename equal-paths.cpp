@@ -1,18 +1,46 @@
 #ifndef RECCHECK
-//if you want to add any #includes like <iostream> you must do them here (before the next endif)
-
+#include <cstdlib>
 #endif
 
 #include "equal-paths.h"
-using namespace std;
 
+namespace {
 
-// You may add any prototypes of helper functions here
-
-
-bool equalPaths(Node * root)
+// Returns the subtree's leaf depth.  -1 means that unequal leaf depths
+// were found somewhere below this node.
+int equalHeight(Node* root)
 {
-    // Add your code below
+    if(root == nullptr) {
+        return 0;
+    }
 
+    if(root->left == nullptr && root->right == nullptr) {
+        return 1;
+    }
+
+    if(root->left == nullptr) {
+        int rightHeight = equalHeight(root->right);
+        return rightHeight == -1 ? -1 : rightHeight + 1;
+    }
+
+    if(root->right == nullptr) {
+        int leftHeight = equalHeight(root->left);
+        return leftHeight == -1 ? -1 : leftHeight + 1;
+    }
+
+    int leftHeight = equalHeight(root->left);
+    int rightHeight = equalHeight(root->right);
+
+    if(leftHeight == -1 || rightHeight == -1 || leftHeight != rightHeight) {
+        return -1;
+    }
+
+    return leftHeight + 1;
 }
 
+} // namespace
+
+bool equalPaths(Node* root)
+{
+    return equalHeight(root) != -1;
+}
